@@ -1,0 +1,1 @@
+page.replace_html('stringingHistory', :partial => 'stringing_history', :locals => { :racket_stringings => @racket_stringings })

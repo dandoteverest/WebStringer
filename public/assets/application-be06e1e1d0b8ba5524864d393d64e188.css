@@ -1,0 +1,21 @@
+/*
+ * The Pragmatic Studio
+ * http://pragmaticstudio.com
+ * Copyright (c) 2007 The Pragmatic Studio
+ *
+ * Please don't use this exact layout and style 
+ * combination in your applications.
+
+@import "/stylesheets/ie.css";
+ */
+
+
+.racquet-icon {
+    background-image: url(/images/racquet-icon-2.jpeg) !important;
+    background-size: 16px 16px;
+}
+
+
+.filter-panel {
+    background: #bbbbbb;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Racket Stringing</title>
+  <%= stylesheet_link_tag 'application' %>
+  <% content_for :stylesheets do %>
+    table.records th { background: #ccc url("<%= image_path('table-header-background.png') %>") repeat-x top; }
+  <% end %>
+  <%= stylesheet_link_tag 'banner' %>
+  <% content_for :stylesheets do %>
+    #navcontainer ul li { background: url("<%= image_path('gradient_silver.png') %>") repeat-x; }
+    #navcontainer li#active { background: url("<%= image_path('gradient_blue.png') %>") repeat-x; }
+    #navcontainer a:hover { background: url("<%= image_path('gradient_blue.png') %>") repeat-x; }
+  <% end %>
+  <%= stylesheet_link_tag 'jquery_tabs' %>
+  <% content_for :stylesheets do %>
+    .tabs a { background: url("<%= image_path('tabs.png') %>") no-repeat -366px 0; }
+  <% end %>
+  <%= stylesheet_link_tag 'ext/resources/css/ext-all' %>
+  <%= stylesheet_link_tag 'opentip' %>
+  <% content_for :stylesheets do %>
+    .opentip .loadingIndication { background: url("<%= image_path('loading.gif') %>") center center no-repeat; }
+    .opentipButtons .close { background: url("<%= image_path('button.close.small.ffffff.png') %>") center center no-repeat; }
+    .opentipContainer .stem div { background: no-repeat url("<%= image_path('stems.cccccc.png') %>"); }
+    .style-standard .stem div { background-image: url("<%= image_path('stems.e3ca1b.png') %>"); }
+    .style-rounded .stem div { background-image: url("<%= image_path('stems.c3ddf0.png') %>"); }
+    .style-slick .stem div { background-image: url("<%= image_path('stems.cccccc.png') %>"); }
+    .style-glass .stem { background-image: url("<%= image_path('stems.ffffff.png') %>"); }
+    .style-glass .opentipButtons .close { background-image: url("<%= image_path('button.close.big.ffffff.png') %>"); }
+
+    .ext-group { background-image: url("<%= image_path('group.gif') %>"); }
+  <% end %>
+  <%= stylesheet_link_tag 'opentip.contentDesign' %>
+  <style type="text/css"><%= yield :stylesheets %></style>
+  <%= javascript_include_tag 'prototype', 'scriptaculous', 'effects', 'jquery', 'jquery.form', 'tabs', 'application', 'ext/ext-all-dev' %>
+  <script>
+    // this allows jquery to be called along with scriptaculous and YUI without any conflicts
+    // the only difference is all jquery functions should be called with $j instead of $
+    // e.g. $j('#div_id').stuff instead of $('#div_id').stuff
+    var $j = jQuery.noConflict();
+  </script>
+  
+  <%= javascript_include_tag 'opentip' %>
+  <% javascript_tag do %>
+    Opentip.defaultStyle = 'rounded';
+  <% end %>
+  <%= calendar_date_select_includes %>
+  <%= include_tiny_mce_if_needed %>
+</head>
+
+<body>
+  <div id="main-body">
+
+    <div id="content">
+      <%= yield :layout %>
+    </div>
+
+  </div>
+  
+  
+  <div id="footer" style="clear: both;">
+    <p>
+      <a href="http://localhost:3000/customers">Racket Stringing</a>. 
+    </p>
+    <p>
+    </p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,2 @@
+page.replace_html('customerRacketModelOptions', :partial => 'racket_model_options', :locals => { :racket => @racket })
+page.replace_html('editRacketImageDiv', :partial => 'edit_racket_image', :locals => { :racket => @racket })

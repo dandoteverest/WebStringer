@@ -1,0 +1,73 @@
+
+<%= javascript_tag do %>
+  Ext.onReady(function() {
+
+    Ext.create('Ext.window.Window', {
+      layout: 'fit',
+      width: 450,
+      height: 300,
+      items: [
+        {
+          xtype: 'panel',
+          layout: 'border',
+          items: [{
+              region: 'west',
+              width: 150,
+              xtype: 'radiogroup',
+              margin: 5,
+              columns: 1,
+              veritcal: true,
+              items: [
+                {
+                  boxLabel: 'Existing Account',
+                  name: 'rb',
+                  checked: true,
+                  inputValue: '1',
+                  listeners: {
+                    change: function(field, selected) {
+                      if (selected) {
+                        this.up('panel').getComponent('cardPanel').getLayout().setActiveItem('existingLogin');
+                      }
+                    }
+                  }
+                },
+                {
+                  boxLabel: 'Create a New Account',
+                  name: 'rb',
+                  inputValue: '2',
+                  listeners: {
+                    change: function(field, selected) {
+                      if (selected) {
+                        this.up('panel').getComponent('cardPanel').getLayout().setActiveItem('newLogin');
+                      }
+                    }
+                  }
+                }
+              ],
+              listeners: {
+                render: function(rg) {
+                    rg.getEl().query('.x-form-checkboxgroup-body')[0].setAttribute('valign','top')
+                }
+              }
+          },
+          {
+            xtype: 'panel',
+            itemId: 'cardPanel',
+            layout: 'card',
+            region: 'center',
+            items: [
+              {
+                xtype: 'logindialog',
+                itemId: 'existingLogin'
+              },
+              {
+                xtype: 'newlogindialog',
+                itemId: 'newLogin'
+              }
+            ]
+          }]
+        }
+      ]
+    }).show();
+  });
+<% end %>

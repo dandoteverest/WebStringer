@@ -1,0 +1,3 @@
+// Place your application-specific JavaScript functions and classes here
+// This file is automatically included by javascript_include_tag :defaults
+function clickLink(linkobj){var onclickHandler=linkobj.getAttribute("onclick");onclickHandler==null?document.location=linkobj.getAttribute("href"):eval(onclickHandler(linkobj))}function disableEnterSubmit(e){var t=window.event?window.event.keyCode:e.which;return t!=13}function toggleElementVisibleWithCollapseImage(e,t){$(t).src.include("large_expand.gif")?($(t).src=$(t).src.sub("large_expand","large_collapse"),new Effect.Appear($(e),{duration:.5})):($(t).src=$(t).src.sub("large_collapse","large_expand"),new Effect.Fade($(e),{duration:.5}))};

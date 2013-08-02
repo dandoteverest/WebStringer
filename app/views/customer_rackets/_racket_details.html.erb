@@ -1,0 +1,26 @@
+<div id='customerRacketDetails'>
+  <table width='100%'>
+    <thead>
+      <th colspan=2>Specifications</th>
+      <th style='text-align: center'>Image</th>
+    </thead>
+    <tr>
+      <td>Manufacturer:</td>
+      <td><%= racket.racket_manufacturer.name rescue "" %></td>
+      <td style='padding-left: 15px' rowspan=5><%= (image_tag(racket.image.url(:small)) rescue "") %></td>
+    </tr>
+    <tr>
+      <td style='padding-top: 5px'>Model:</td>
+      <td style='padding-top: 5px'><%= racket.model rescue "" %></td>
+    </tr>
+    <tr>
+      <td style='padding-top: 5px'>String Pattern:</td>
+      <td style='padding-top: 5px'><%= racket.string_pattern.name rescue "" %></td>
+    </tr>
+    <tr>
+      <td style='padding-top: 5px'>Head Size:</td>
+      <td style='padding-top: 5px'><%= racket.head_size rescue "" %></td>
+    </tr>
+  </table>
+
+</div>

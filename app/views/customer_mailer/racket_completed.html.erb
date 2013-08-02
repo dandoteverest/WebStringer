@@ -1,0 +1,5 @@
+<p>Hello <%= @racket_stringing.customer_racket.customer.first_name %>,</p>
+
+<p>We have completed stringing your <%= @racket_stringing.customer_racket.racket.full_name %>.  You may pick it up at your earliest convenience.</p>
+
+<p>The cost for this stringing is <%= number_to_currency(@racket_stringing.cost) %>.  Your total bill for all racket stringings is currently <%= number_to_currency(@racket_stringing.customer_racket.customer.current_bill) %></p>

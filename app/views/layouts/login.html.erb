@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <%= stylesheet_link_tag 'ext/resources/css/ext-all-gray' %>
+  <%= stylesheet_link_tag '/stylesheets/application' %>
+  <%= stylesheet_link_tag 'application.css' %>
+  <style type="text/css"><%= yield :stylesheets %></style>
+  <%= javascript_include_tag 'ext/ext-all-dev.js' %>
+
+<%= javascript_include_tag 'LoginDialog.js' %>
+<%= javascript_include_tag 'NewLoginDialog.js' %>
+  
+  <style>
+    .logo_filler {
+      background: url(<%= image_path('logo_filler.png') %>) repeat-x
+    }
+
+  </style>
+  
+</head>
+<%= javascript_tag do %>
+  Ext.require(['*']);
+
+  Ext.require(['*']);
+  Ext.onReady(function() {
+    Ext.Ajax.extraParams = { authenticity_token: "<%= form_authenticity_token %>" };
+  }); 
+<% end %>
+<body>
+ 
+  <div id='northMainDiv'>
+    <table id="table_header" width='100%'>
+      <tr style='width: 100%' id="logo">
+        <td class='logo_filler'><%= image_tag("logo.png") %></td>
+      </tr>
+    </table>
+
+  </div>
+  <div id="main-body">
+
+    <div id="content">
+      <%= yield :layout %>
+    </div>
+
+  </div>
+  
+  
+  <div id="footer" style="clear: both;">
+  </div>
+
+</body>
+</html>

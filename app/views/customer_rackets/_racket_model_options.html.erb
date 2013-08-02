@@ -1,0 +1,5 @@
+<div id='customerRacketModelOptions'>
+  <%= select_tag :racket_model,
+                 options_from_collection_for_select(Racket.all_for_manufacturer(racket.racket_manufacturer), :id, :model, racket.id),
+                 :onchange => 'updateRacketModelImage(this)'%>
+</div>

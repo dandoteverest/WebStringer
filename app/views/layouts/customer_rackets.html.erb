@@ -1,0 +1,12 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<% content_for :stylesheets do %>
+  #navcontainer ul li#coachesNavItem { background: url("<%= image_path('gradient_blue.png') %>") repeat-x 20px; }
+<% end %>
+
+<% content_for :banner do %>
+  <%= render :partial => 'layouts/banner' %>
+<% end %>
+
+<%= render :file => 'layouts/application' %>

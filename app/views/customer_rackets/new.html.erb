@@ -1,0 +1,125 @@
+<% javascript_tag do %>
+  Ext.onReady(function(){
+
+    _mainContentPanel.add(new Ext.Panel({
+      layout: 'border',
+      title: 'Customers',
+      autoscroll: true,
+      border: false,
+      items: [
+        new Ext.Panel({
+          region: 'center',     // center region is required, no width/height specified
+          xtype: 'container',
+          layout: 'border',
+          autoscroll: true,
+          minSize: 500,
+          margins: '0, 0, 0, 0',
+          items: {
+            region: 'center',
+            contentEl: 'centerDiv',
+            border: false
+          }
+        })
+      ]
+    }));
+    _mainContentPanel.doLayout({force: true});
+  });
+
+  function updateRacketModels(list) {
+    var params = new Hash();
+    params.set("racket_manufacturer_id", list.options[list.selectedIndex].value);
+    new Ajax.Request("/customer_rackets/update_racket_models",
+                     {
+                        asynchronous:true,
+                        evalScripts:true,
+                        parameters: params,
+                        onCreate: function() { $('racket_id').disabled = true; },
+                        onComplete: function() { $('racket_id').disabled = false; }
+                     });
+  }
+
+  function updateRacketModelDetails(list) {
+    var params = new Hash();
+    params.set("racket_id", list.options[list.selectedIndex].value);
+    new Ajax.Request("/customer_rackets/update_racket_model_details",
+                     {
+                        asynchronous:true,
+                        evalScripts:true,
+                        parameters: params,
+                        onCreate: function(transport) { Element.show('updating_model_details_spinner'); },
+                        onComplete: function(transport) { Element.hide('updating_model_details_spinner'); }
+                     });
+  }
+<% end %>
+
+<style>
+  div.update_racket_model_details_div {
+    position: relative;
+  }
+
+  div.updating_model_details_spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+    background: #ddd;
+    text-align:center;
+  }
+
+  table.customerRacketTable tr td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+</style>
+
+<div id='centerDiv' style='padding-left: 10px; padding-right: 10px'>
+  <% form_for @customer_racket do |f| %>
+    <%= f.hidden_field :customer_id %>
+
+    <table class='customerRacketTable' width='100%'>
+      <tr>
+        <td>
+          <% field_set_tag "Rackets" do %>
+            <table>
+              <tr>
+                <td>Manufacturer:</td>
+                <td><%= select_tag :racket_manufacturer_id,
+                                 options_from_collection_for_select(
+                                    [RacketManufacturer.new(:name => "Select", :id => -1)].concat(RacketManufacturer.all(:order => 'name')), :id, :name),
+                                 :onchange => 'updateRacketModels(this)'   %></td>
+              </tr>
+              <tr>
+                <td>Model:</td>
+                <td><%= render :partial => 'racket_models', :locals => {:racket_models => []} %></td>
+              </tr>
+              <tr>
+                <td>Grip Size:</td>
+                <td><%= f.select :grip_size_id, options_from_collection_for_select(GripSize.all(:order => :size), :id, :size) %></td>
+              </tr>
+              <tr>
+                <td colspan=2>
+                  <div class='update_racket_model_details_div'>
+                    <%= render :partial => 'racket_details', :locals => {:racket => nil} %>
+                    <div id='updating_model_details_spinner' class='updating_model_details_spinner' style='display: none'>
+                      <p><%= image_tag('ajax_loader.gif') %></p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div>
+              <%= f.submit "Add Racket" %>
+            </div>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+  <div>
+    <%= button_to "Racket not Listed", new_racket_path %>
+  </div>
+</div>

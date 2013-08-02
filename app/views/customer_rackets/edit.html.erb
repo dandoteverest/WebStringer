@@ -1,0 +1,153 @@
+<% javascript_tag do %>
+  Ext.onReady(function(){
+
+    _mainContentPanel.add(new Ext.Panel({
+      layout: 'border',
+      border: false,
+      items: [
+        new Ext.Panel({
+          region: 'west',
+          title: 'Racket',
+          split: true,
+          width: 470,
+          layout: 'fit',
+          margins: '0, 0, 0, 0',
+          items: new Ext.Panel({
+            // xtype: 'panel' implied by default
+            contentEl: 'westDiv',
+            id: 'west-region-container',
+          width: 450,
+          minSize: 450,
+          autoScroll: true,
+            layout: 'fit',
+            margins: '20',
+            unstyled: true,
+            border: true
+          })
+        }), new Ext.Panel({
+          region: 'center',     // center region is required, no width/height specified
+          xtype: 'container',
+          layout: 'border',
+          autoscroll: true,
+          minSize: 500,
+          margins: '0, 0, 0, 0',
+          items: {
+            region: 'center',
+            contentEl: 'centerDiv',
+            border: false
+          }
+        })
+      ]
+    }));
+    _mainContentPanel.doLayout({force: true});
+  });
+
+  function updateRacketModels(list) {
+    var params = new Hash();
+    params.set('racket_manufacturer_id', list.options[list.selectedIndex].value);
+    new Ajax.Request("/customer_rackets/get_rackets_by_manufacturer", { asynchronous:true, evalScripts:true, parameters: params });
+  }
+
+  function updateRacketModelImage(list) {
+    var params = new Hash();
+    params.set('racket_id', list.options[list.selectedIndex].value);
+    new Ajax.Request("/customer_rackets/get_racket_image", { asynchronous:true, evalScripts:true, parameters: params });
+  }
+<% end %>
+
+<style>
+  table.racketSpecTable tr td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+</style>
+
+<div id='westDiv' style='padding-left: 10px; padding-right: 10px'>
+  <% form_for @customer_racket do |f| %>
+    <% is_two_piece = (@customer_racket.racket_stringings.first.is_two_piece? rescue nil) %>
+    <table width='450px' class='racketSpecTable'>
+      <thead>
+        <th colspan=2 style='text-align: center'>Specifications</th>
+        <th/>
+      </thead>
+      <tr>
+        <td>Make:</td>
+        <td>
+          <%= select_tag :racket_manufacturer,
+                         options_from_collection_for_select(RacketManufacturer.all(:order => 'name'), :id, :name, @customer_racket.racket.racket_manufacturer.id),
+                         :onchange => 'updateRacketModels(this)'%>
+        </td>
+        <td rowspan=<%= is_two_piece ? "11" : "9" %> style='text-align: right'>
+          <%= render :partial => 'edit_racket_image', :locals => { :racket => @customer_racket.racket } %>
+        </td>
+        
+      </tr>
+      <tr>
+        <td>Model:</td>
+        <td>
+          <%= render :partial => 'racket_model_options',
+                     :locals => { :racket => @customer_racket.racket } %>
+        </td>
+      </tr>
+      <tr>
+        <td>String Pattern:</td>
+        <td><%= "#{@customer_racket.racket.string_pattern.mains} x #{@customer_racket.racket.string_pattern.crosses}" %></td>
+      </tr>
+      <tr>
+        <td>Head Size:</td>
+        <td><%= "#{@customer_racket.racket.head_size} sqin" %></td>
+      </tr>
+      <tr>
+        <td>Grip Size:</td>
+        <td><%= @customer_racket.grip_size.size %></td>
+      </tr>
+      <tr>
+        <td>Last Strung:</td>
+        <td><%= (@customer_racket.racket_stringings.first.strung_on.to_s(:standard) rescue "N/A") %></td>
+      </tr>
+      <tr>
+        <td>Pieces:</td>
+        <td><%= (is_two_piece.nil? ? "N/A" : (is_two_piece ? "2" : "1")) %></td>
+      </tr>
+      <tr>
+        <% tennis_string = (@customer_racket.racket_stringings.first.main_string rescue nil) %>
+        <td><%= is_two_piece ? "Main " : "" %><%= "String:" %></td>
+        <td><%= ("#{tennis_string.string_manufacturer.name} #{tennis_string.name}" rescue "N/A") %></td>
+      </tr>
+      <tr>
+        <td><%= is_two_piece ? "Main " : "" %><%= "Tension:" %></td>
+      <td><%= (@customer_racket.racket_stringings.first.main_tension rescue "N/A") %></td>
+      </tr>
+      <% if is_two_piece %>
+        <tr>
+          <% tennis_string = (@customer_racket.racket_stringings.first.cross_string rescue nil) %>
+          <td><%= "Cross String:" %></td>
+          <td><%= ("#{tennis_string.string_manufacturer.name} #{tennis_string.name}" rescue "N/A") %></td>
+        </tr>
+        <tr>
+          <td><%= "Cross Tension:" %></td>
+          <td><%= (@customer_racket.racket_stringings.first.cross_tension rescue "N/A") %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+  <div style='padding-top: 5px'>
+    <% form_remote_tag :url => { :action => 'update_customer_racket_notes' },
+                       :before => "tinyMCE.triggerSave(true,true)" do %>
+      <%= hidden_field_tag :id, @customer_racket.id %>
+      <%= "Racket Notes:" %>
+      <%= text_area_tag :customer_racket_notes, @customer_racket.notes, :class => 'mceEditor' %>
+      <div style='padding-top: 5px'><%= submit_tag "Update" %></div>
+    <% end %>
+  </div>
+</div>
+
+<div id='centerDiv'>
+
+  <div style='padding: 20px'>
+    <%= render :partial => "new_stringing" %>
+  </div>
+  <div style='padding: 20px'>
+    <%= render :partial => "stringing_history", :locals => { :racket_stringings => @racket_stringings } %>
+  </div>
+</div>

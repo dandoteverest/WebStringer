@@ -1,0 +1,66 @@
+<%= javascript_include_tag 'models/Stringers.js' %>
+<%= javascript_include_tag 'StringerTreePanel.js' %>
+
+<%= javascript_tag do %>
+
+  Ext.onReady(function(){
+
+    var userForm = Ext.create('Ext.panel.Panel', {
+      layout: 'fit',
+      items: [
+          /*
+          {
+            xtype: 'tabpanel',
+            items: [
+              {
+                title: 'String Details',
+                xtype: 'string_details',
+                width: 500,
+              },
+              {
+                title: 'Customers who use this string',
+                xtype: 'usersofstring',
+                width: 500
+              }
+            ]
+          }
+          */
+        ]
+      }
+    );
+
+    _mainContentPanel.add(
+
+      new Ext.Panel({
+        layout: 'border',
+        title: 'Stringers',
+        autoScroll: true,
+        border: false,
+        items: [
+          {
+            xtype: 'panel',
+            layout: 'fit',
+            region: 'west',
+            resizable: true,
+            minWidth: 350,
+            autoScroll: true,
+            items: [
+              {
+                xtype: 'stringerstreepanel',
+                store: Ext.StoreMgr.lookup('stringerTreeViewStore')
+              }
+            ]
+          },
+          {
+            region: 'center',     // center region is required, no width/height specified
+            layout: 'fit',
+            items: userForm
+          }
+        ]
+      })
+    );
+    _mainContentPanel.doLayout({force: true});
+  });
+
+<% end %>
+

@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <%= stylesheet_link_tag 'ext/resources/css/ext-all-gray' %>
+  <%= stylesheet_link_tag '/stylesheets/application' %>
+  <%= stylesheet_link_tag 'application.css' %>
+  <%= stylesheet_link_tag 'ext/examples/ux/css/CheckHeader' %>
+  <style type="text/css"><%= yield :stylesheets %></style>
+  <% if false %>
+  <%= javascript_include_tag 'prototype', 'scriptaculous', 'effects', 'jquery', 'jquery.form', 'tabs', 'application', 'ext/ext-all-dev' %>
+  <% else %>
+  <%= javascript_include_tag 'prototype', 'ext/ext-all-dev' %>
+  <% end %>
+  <script>
+    // this allows jquery to be called along with scriptaculous and YUI without any conflicts
+    // the only difference is all jquery functions should be called with $j instead of $
+    // e.g. $j('#div_id').stuff instead of $('#div_id').stuff
+    //var $j = jQuery.noConflict();
+  </script>
+  
+  <style>
+    .logo_filler {
+      background: url(<%= image_path('logo_filler.png') %>) repeat-x
+    }
+
+    .my-racket-queue tr td {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .my-racket-queue-late {
+      color: red;
+    }
+
+    .my-racket-queue {
+      font-size: .9em;
+      color: gray;
+    }
+
+    .my-racket-queue:hover {
+      font-size: .9em;
+      color: black;
+    }
+
+    .racket-thumb-wrap:hover {
+      color: black;
+      background: #DDDDDD;
+    }
+
+    .users-of-racket-item {
+      font-size: .9em;
+      color: gray;
+    }
+
+    .users-of-racket-item:hover {
+      font-size: .9em;
+      color: black;
+    }
+  </style>
+    <%= javascript_include_tag 'ExtOverride.js' %>
+    <%= javascript_include_tag 'overrides/TreeStore.js' %>
+
+    <%= javascript_include_tag 'models/Extras.js' %>
+    <%= javascript_include_tag 'models/CustomerDetails.js' %>
+    <%= javascript_include_tag 'models/RacketDetails.js' %>
+    <%= javascript_include_tag 'models/RacketStringings.js' %>
+    <%= javascript_include_tag 'models/StringManufacturer.js' %>
+    <%= javascript_include_tag 'models/Stringers.js' %>
+    <%= javascript_include_tag 'models/StringDetails.js' %>
+    <%= javascript_include_tag 'models/RacketManufacturer.js' %>
+    <%= javascript_include_tag 'models/StringPattern.js' %>
+    <%= javascript_include_tag 'models/CustomerRackets.js' %>
+    <%= javascript_include_tag 'models/GripSize.js' %>
+    <%= javascript_include_tag 'AddCustomerRacketDialog.js' %>
+    <%= javascript_include_tag 'HeadSizeSpinner.js' %>
+    <%= javascript_include_tag 'StringGaugeSpinner.js' %>
+    <%= javascript_include_tag 'CustomerRacketDetailsPanel.js' %>
+    <%= javascript_include_tag 'StringingHistory.js' %>
+    <%= javascript_include_tag 'CustomerDetailsPanel.js' %>
+    <%= javascript_include_tag 'CustomerTreePanel.js' %>
+    <%= javascript_include_tag 'CustomersPanel.js' %>
+    <%= javascript_include_tag 'EditRacquetDialog.js' %>
+    <%= javascript_include_tag 'NewRacketDialog.js' %>
+    <%= javascript_include_tag 'NewStringDialog.js' %>
+    <%= javascript_include_tag 'NewCustomerDialog.js' %>
+    <%= javascript_include_tag 'NewCompanyDialog.js' %>
+    <%= javascript_include_tag 'MyRacketQueue.js' %>
+    <%= javascript_include_tag 'WebStringerPanel.js' %>
+
+    <!-- UI Panels for the Racquet card -->
+    <%= javascript_include_tag 'RacquetsPanel.js' %>
+    <%= javascript_include_tag 'RacketDetailsPanel.js' %>
+    <%= javascript_include_tag 'RacketImageListPanel.js' %>
+    <%= javascript_include_tag 'UsersOfRacketPanel.js' %>
+
+    <!-- UI Panels for the String card -->
+    <%= javascript_include_tag 'StringsPanel.js' %>
+    <%= javascript_include_tag 'StringDetailsPanel.js' %>
+    <%= javascript_include_tag 'StringImageListPanel.js' %>
+    <%= javascript_include_tag 'UsersOfStringPanel.js' %>
+
+    <%= javascript_include_tag 'AccountsReceivablePanel.js' %>
+</head>
+
+<%= javascript_tag do %>
+
+  Ext.require(['*']);
+
+  Ext.Ajax.extraParams = { authenticity_token: "<%= form_authenticity_token %>" };
+  
+
+  Ext.onReady(function(){
+
+    Ext.tip.QuickTipManager.init();
+
+    Ext.define('Racket', {
+      extend: 'Ext.data.Model',
+      fields: [
+        { name: 'id', type: 'integer'},
+        { name: 'model', type: 'string'},
+        { name: 'head_size', type: 'string'},
+        { name: 'racket_manufacturer_id', type: 'integer'},
+        { name: 'racket_manufacturer_name', type: 'string'},
+        { name: 'racket_image_url', type: 'string'},
+        { name: 'string_pattern_id', type: 'integer'}
+      ]
+    });
+
+    var custMenu = Ext.create('Ext.button.Split', {
+        text: "Customers",
+        iconCls: 'blist',
+        handler: function() {
+            Ext.ComponentQuery.query('#webStringerPanel').first().select('customersPanel');
+        },
+        style: {
+            overflow: 'visible'
+        },
+        menu: {
+            items: [
+            {
+                text: "New",
+                menu: {
+                    items: [{
+                        text: "Customer",
+                        itemId: 'newCustomerMenuItem',
+                        handler: function() {
+                            Ext.create('NewCustomerDialog', {
+                                itemId: 'newCustomerDialog'
+                            }).show();
+                        }
+                    }]
+                }
+            }, {
+                text: "Add",
+                menu: {
+                    items: [{
+                        text: "Customer Racquet",
+                        itemId: 'addCustomerRacketMenuItem',
+                        disabled: true,
+                        handler: function() {
+                            var customer_id = Ext.ComponentQuery.query('customertreepanel')[0].getSelectionModel().getSelection()[0].get('customer_id');
+                            Ext.create('AddCustomerRacketDialog', {
+                                customerId: customer_id,
+                                itemId: "addCustomerRacketDialog"
+                            }).show()
+                        }
+                    }]
+                }
+            }, {
+                text: "Accounts Receivable",
+                iconCls: 'ext-group',
+                handler: function() {
+                    Ext.ComponentQuery.query('#webStringerPanel').first().select('accountsReceivablePanel');
+                }
+            }]
+        }
+    });
+
+    var racketMenu = Ext.create('Ext.button.Split', {
+        text: "Racquets",
+        iconCls: 'blist',
+        handler: function() {
+            Ext.ComponentQuery.query('#webStringerPanel').first().select('racquetsPanel');
+        },
+        style: {
+            overflow: 'visible'
+        },
+        menu: {
+            items: [
+            { 
+                text: "New",
+                menu: {
+                    items: [
+                    {
+                        text: 'Manufacturer',
+                        itemId: 'newRacquetManufacturerMenuItem'
+                    },
+                    {
+                        text: 'Racquet',
+                        itemId: 'newRacquetMenuItem'
+                    }]
+                }
+            }, {
+                text: "Edit",
+                menu: {
+                    items: [
+                    {
+                        text: 'Manufacturer',
+                        itemId: 'editRacquetManufacturerMenuItem'
+                    }
+                    ]
+                }
+            }, {
+                text: "List",
+                iconCls: 'ext-group',
+                handler: function() {
+                    Ext.ComponentQuery.query('#webStringerPanel').first().select('racquetsPanel');
+                }
+            }]
+        }
+    });
+
+    var stringMenu = Ext.create('Ext.button.Split', {
+        text: "Tennis Strings",
+        iconCls: 'blist',
+        handler: function() {
+            Ext.ComponentQuery.query('#webStringerPanel').first().select('stringsPanel');
+        },
+        style: {
+            overflow: 'visible'
+        },
+        menu: {
+            items: [
+            { 
+                text: "New",
+                menu: {
+                  items: [
+                    {
+                      text: 'Manufacturer',
+                      handler: function() { Ext.create('NewStringManufacturerDialog').show() }
+                    },
+                    {
+                      text: 'String',
+                      itemId: 'newStringMenuItem'
+                      /*,
+                      handler: function() { Ext.create('NewStringDialog').show() }
+                      */
+                    }
+                  ]
+                }
+            }, {
+                text: "List",
+                iconCls: 'ext-group',
+                handler: function() {
+                  Ext.ComponentQuery.query('#webStringerPanel').first().select('stringsPanel');
+                }
+            }]
+        }
+    });
+
+<% if User.current.is_site_admin? %>
+    var adminMenu = Ext.create('Ext.button.Split', {
+      text: "Admin Tools",
+      iconCls: 'blist',
+      handler: function() {
+        document.location = "<%= admin_index_path %>";
+      },
+      style: {
+        overflow: 'visible'
+      },
+      menu: {
+        items: [
+          { 
+            text: "New",
+            menu: {
+              items: [
+                {
+                  text: 'Company',
+                  handler: function() { Ext.create('NewCompanyDialog').show() }
+                },
+                {
+                  text: 'String',
+                  handler: function() { Ext.create('NewUserDialog').show() }
+                }
+              ]
+            }
+          },
+          {
+                text: "Accounts Receivable",
+                handler: function() { document.location = "<%= metrics_path %>" }
+          },
+          {
+                text: "Metrics",
+                handler: function() { document.location = "<%= metrics_path %>" }
+          }
+        ]
+      }
+    });
+<% end %>
+
+    Ext.StoreManager.lookup('racketQueueStore').load();
+    var viewport = new Ext.Viewport({
+      layout: 'fit',
+      items: [
+        {
+          xtype: 'panel',
+          layout: 'border',
+          items: [
+            {
+              region: 'north',
+              layout: 'anchor',
+              margins: '0',
+              items: [
+                {
+                  xtype: 'panel',
+                  contentEl: 'northMainDiv',
+                  layout: 'fit',
+                  unstyled: true,
+                  border: true,
+                  anchor: '100%'
+                },
+                {
+                  xtype: 'toolbar',
+                  items: [
+                    custMenu,
+                    '-',
+                    racketMenu,
+                    '-',
+                    stringMenu,
+                    <% if User.current.is_site_admin? %>
+                    '-',
+                    adminMenu
+                    <% end %>
+                  ]
+                }
+              ]
+            }, {
+                xtype: 'webstringerpanel',
+                itemId: 'webStringerPanel',
+                region: 'center'
+                <% if User.current.is_site_admin? or User.current.is_company_admin? %>
+                , listeners: {
+                    render: function() {
+                        /*
+                        this.down('#_cardPanel').add({
+                            // TODO:  Add Admin panel here!
+                        });
+                        */
+                    }
+                }
+                <% end %>
+            }
+            /*, {
+              region: 'south',     // center region is required, no width/height specified
+              xtype: 'panel',
+              title: 'Racquet in Queue',
+              height: 90,
+              layout: 'fit',
+              margins: '5, 5, 5, 5',
+              items: [
+                {
+                  xtype: 'myracketqueue',
+                  itemId: 'racketQueue'
+                }
+              ]
+            }
+            */
+          ]
+        }
+      ]
+    });
+
+  });
+<% end %>
+
+<body>
+  
+  <div id='northMainDiv'>
+    <table id="table_header" width='100%'>
+      <tr style='width: 100%' id="logo">
+        <td class='logo_filler'><%= image_tag("logo.png") %></td>
+      </tr>
+    </table>
+
+  </div>
+
+  <div id="main-body">
+  
+      <%= yield :layout %>
+  
+  </div>
+
+  <!--
+  <div id="southMainDiv" style="clear: both;">
+    <div id="footer" style="clear: both;">
+    </div>
+  </div>
+  -->
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<%= javascript_include_tag 'models/Stringers.js' %>
+
+<%= javascript_tag do %>
+
+  Ext.onReady(function(){
+
+    _mainContentPanel.add(
+
+      new Ext.Panel({
+        layout: 'border',
+        title: 'Metrics',
+        autoScroll: true,
+        border: false,
+        items: [
+          {
+            xtype: 'dataview',
+            region: 'west',
+            resizable: true,
+            itemSelector: 'div.itemList',
+            autoScroll: true,
+            listeners: {
+                itemclick: function(view, record) {
+                    console.log("Selected " + record.get('topic'));
+                }
+            },
+            tpl: '<tpl for="."><div style="padding-left: 10px; padding-right: 10px" class="itemList"><span>{topic}</span><br/></div></tpl>',
+            store: new Ext.data.ArrayStore({
+                storeId: 'arrayStore',
+                fields: ['topic'],
+                data: [
+                    ['Stringings by Month'],
+                    ['Stringings by Customer']
+                ]
+            })
+          },
+          {
+            xtype: 'panel',
+            itemId: 'chartPanel',
+            region: 'center',     // center region is required, no width/height specified
+            layout: 'fit',
+          }
+        ]
+      })
+    );
+    _mainContentPanel.doLayout({force: true});
+  });
+
+<% end %>
+

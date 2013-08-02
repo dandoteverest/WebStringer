@@ -1,0 +1,19 @@
+
+<% form_for @user do |f| %>
+  <% f.error_messages %>
+  
+  <% field_set_tag "Create New User" do %>
+    <div>
+      <%= f.label :login %><%= f.text_field :login %>
+    </div>
+    <div>
+      <%= f.label :password %><%= f.password_field :password %>
+    </div>
+    <div>
+      <%= f.label :password_confirmation %><%= f.password_field :password_confirmation %>
+    </div>
+    <div>
+      <%= f.submit "Login" %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,1 @@
+page.replace_html('customerRacketDetails', :partial => 'racket_details', :locals => {:racket => @racket})

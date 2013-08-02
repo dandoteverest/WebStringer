@@ -8,7 +8,7 @@ gem 'rails'
 
 gem 'mysql2'
 #gem 'pg'
-gem 'ruby-debug19'
+#gem 'ruby-debug19'
 gem 'paperclip'
 gem 'aws-sdk', '~> 1.3.4'
 gem 'will_paginate'
